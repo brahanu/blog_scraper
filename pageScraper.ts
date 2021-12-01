@@ -1,5 +1,7 @@
-import {Article} from "./Article";
-import {User} from "./User";
+// const {Article,User} = require("./DataClasses")
+import DataClasses from "./DataClasses";
+import User = DataClasses.User;
+import Article = DataClasses.Article;
 
 const ScraperObject = {
     url: 'https://devblogs.microsoft.com/visualstudio/',
@@ -32,7 +34,7 @@ const ScraperObject = {
                         }
                     });
                 });
-                let curArticle: Article = new Article(articleTitle, articleAuthor, link);
+                let curArticle= new Article(articleTitle, articleAuthor, link);
                 console.log(comments);
                 for (let i = 0; i < comments.length - 1; i++) {
                     if ((comments[i].name === comments[i + 1].name)) {
