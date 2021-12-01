@@ -1,4 +1,5 @@
-// const commentsScraper = require('./commentsScraper.ts');
+import {Article} from "./Article";
+import {User} from "./User";
 
 const ScraperObject = {
     url: 'https://devblogs.microsoft.com/visualstudio/',
@@ -16,24 +17,34 @@ const ScraperObject = {
             });
 
             let pagePromise = (link) => new Promise(async (resolve, reject) => {
-                let user = {};
                 let newPage = await browser.newPage();
                 await newPage.goto(link);
                 console.log("BEFORE DATA")
-                user['articleTitle'] = await newPage.$eval('div > h1', text => text.textContent.trim());
-                user['articleAuthor'] = await newPage.$eval('h5 > a', text => text.textContent.trim());
-                await newPage.waitForSelector('#comments > ul');
-                user['comments'] = await newPage.evaluate(() => {
+                let articleTitle = await newPage.$eval('div > h1', text => text.textContent.trim());
+                let articleAuthor = await newPage.$eval('h5 > a', text => text.textContent.trim());
+                await newPage.waitForSelector('#comments');
+                let comments = await newPage.evaluate(() => {
                     let commentEle = document.querySelectorAll('.comment');
                     return Object.values(commentEle).map(el => {
                         return {
                             name: el.querySelector('.author-name').textContent.trim(),
-                            isMSE: !!el.querySelector('span.author-name>a>img')
+                            isMSE: !!el.querySelector('a>img')
                         }
                     });
                 });
+                let curArticle: Article = new Article(articleTitle, articleAuthor, link);
+                console.log(comments);
+                for (let i = 0; i < comments.length - 1; i++) {
+                    if ((comments[i].name === comments[i + 1].name)) {
+                        let curUser = new User(comments[i].name, comments[i].isMSE != comments[i + 1].isMSE)
+                        if (comments.indexOf(curUser) === -1) {
+                            comments.push(curUser);
+                        }
+                    }
+                }
+
                 console.log("AFTER DATA")
-                resolve(user);
+                resolve(curArticle);
                 await newPage.close();
             });
             for (let link in urls) {

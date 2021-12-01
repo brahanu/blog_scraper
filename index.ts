@@ -1,3 +1,4 @@
+
 const browserObject = require('./browser.ts');
 const scraperController = require('./pageController.ts');
 
