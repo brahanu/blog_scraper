@@ -5,15 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.ts"
+    "build": "tsc index.ts",
+    "start": "node index.ts",
+    "start:dev": "node -r ts-node/register index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "puppeteer": "^12.0.1"
+    "puppeteer": "^12.0.1",
+    "ts-node": "^10.4.0",
+    "typescript": "^3.5.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "ts-node": "^10.4.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/brahanu/blog_scraper.git"

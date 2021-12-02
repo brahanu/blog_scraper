@@ -41,8 +41,6 @@ const ScraperObject = {
                         users.push(curUser);
                     }
                 }
-                // resolve(users);
-                // let article = {articleTitle, articleAuthor, link, users}
                 resolve({articleTitle, articleAuthor, link, users});
                 await newPage.close();
             });
@@ -50,20 +48,20 @@ const ScraperObject = {
                 let currentPageData = await pagePromise(urls[link]);
                 scrapedData.push(currentPageData);
                 console.log(articleDataBase);
-                break;  //TODO: delete, run for the first article
+                // break;  //TODO: delete, run for the first article
             }
-            //     let nextButtonExist = false;  //TODO: uncomment - multipage scraping
-            //     try {
-            //         const nextButton = await page.$eval('#most-recent > nav > ul > li:nth-child(6) > a', a => a.textContent);
-            //         nextButtonExist = true;
-            //     } catch (err) {
-            //         nextButtonExist = false;
-            //     }
-            //     if (nextButtonExist) {
-            //         await page.click('#most-recent > nav > ul > li:nth-child(6) > a');
-            //         console.log("page")
-            //         return scrapeCurrentPage(); // Call this function recursively
-            //     }
+            let nextButtonExist = false;  //TODO: uncomment - multipage scraping
+            try {
+                const nextButton = await page.$eval('#most-recent > nav > ul > li:nth-child(6) > a', a => a.textContent);
+                nextButtonExist = true;
+            } catch (err) {
+                nextButtonExist = false;
+            }
+            if (nextButtonExist) {
+                await page.click('#most-recent > nav > ul > li:nth-child(6) > a');
+                console.log("page")
+                return scrapeCurrentPage(); // Call this function recursively
+            }
             await page.close();
             return scrapedData;
         }
