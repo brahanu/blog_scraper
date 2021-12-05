@@ -33,21 +33,16 @@ const ScraperObject = {
                 let users = [];
                 for (let i = 0; i < comments.length - 1; i += 2) {
                     if ((comments[i].name === comments[i + 1].name)) {
-                        let curUser = {}
-                        curUser['name'] = comments[i].name;
-                        curUser['isMSE'] = comments[i].isMSE != comments[i + 1].isMSE;
+                        let curUser = [comments[i].name, comments[i].isMSE != comments[i + 1].isMSE]
                         users.push(curUser);
                     }
                 }
                 resolve({articleTitle, articleAuthor, link, users});
                 await newPage.close();
             });
-            // console.log(urls.length);
             for (let link in urls) {
                 let currentPageData = await pagePromise(urls[link]);
                 scrapedData.push(currentPageData);
-                console.log(urls[link]);
-                // console.log(articleDataBase);
                 // break;  //TODO: delete, run for the first article
             }
             let nextButtonExist = false;  //TODO: uncomment - multipage scraping
@@ -58,18 +53,14 @@ const ScraperObject = {
             } catch (err) {
                 nextButtonExist = false;
             }
-            // let i =0;
             if (nextButtonExist) {
                 await page.click('#most-recent > nav > ul > li:last-of-type > a');
-                // console.log("page"  + i)
-                // i+=1
                 return scrapeCurrentPage(); // Call this function recursively
             }
             await page.close();
             return scrapedData;
         }
 
-        // console.log(data);
         return await scrapeCurrentPage();
     }
 }
