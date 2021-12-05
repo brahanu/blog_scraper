@@ -17,7 +17,7 @@ const ScraperObject = {
             let pagePromise = (link) => new Promise(async (resolve, reject) => {
                 let newPage = await browser.newPage();
                 await newPage.goto(link);
-                console.log("BEFORE DATA")
+                // console.log("BEFORE DATA")
                 let articleTitle = await newPage.$eval('div > h1', text => text.textContent.trim());
                 let articleAuthor = await newPage.$eval('h5 > a', text => text.textContent.trim());
                 await newPage.waitForSelector('#comments');
@@ -42,7 +42,7 @@ const ScraperObject = {
                 resolve({articleTitle, articleAuthor, link, users});
                 await newPage.close();
             });
-            console.log(urls.length);
+            // console.log(urls.length);
             for (let link in urls) {
                 let currentPageData = await pagePromise(urls[link]);
                 scrapedData.push(currentPageData);
@@ -58,20 +58,19 @@ const ScraperObject = {
             } catch (err) {
                 nextButtonExist = false;
             }
-            let i =0;
+            // let i =0;
             if (nextButtonExist) {
                 await page.click('#most-recent > nav > ul > li:last-of-type > a');
-                console.log("page"  + i)
-                i+=1
+                // console.log("page"  + i)
+                // i+=1
                 return scrapeCurrentPage(); // Call this function recursively
             }
             await page.close();
             return scrapedData;
         }
 
-        let data = await scrapeCurrentPage();
         // console.log(data);
-        return data;
+        return await scrapeCurrentPage();
     }
 }
 
