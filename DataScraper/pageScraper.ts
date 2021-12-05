@@ -6,8 +6,6 @@ const ScraperObject = {
         console.log(`Navigating to ${this.url}...`);
         await page.goto(this.url);
         let scrapedData = []
-        // let userDataBase = []
-        let articleDataBase = []
 
         async function scrapeCurrentPage() {
             await page.waitForSelector('.site-main');
@@ -44,22 +42,27 @@ const ScraperObject = {
                 resolve({articleTitle, articleAuthor, link, users});
                 await newPage.close();
             });
+            console.log(urls.length);
             for (let link in urls) {
                 let currentPageData = await pagePromise(urls[link]);
                 scrapedData.push(currentPageData);
-                console.log(articleDataBase);
+                console.log(urls[link]);
+                // console.log(articleDataBase);
                 // break;  //TODO: delete, run for the first article
             }
             let nextButtonExist = false;  //TODO: uncomment - multipage scraping
+
             try {
-                const nextButton = await page.$eval('#most-recent > nav > ul > li:nth-child(6) > a', a => a.textContent);
+                const nextButton = await page.$eval('#most-recent > nav > ul > li:last-of-type > a', a => a.textContent);
                 nextButtonExist = true;
             } catch (err) {
                 nextButtonExist = false;
             }
+            let i =0;
             if (nextButtonExist) {
-                await page.click('#most-recent > nav > ul > li:nth-child(6) > a');
-                console.log("page")
+                await page.click('#most-recent > nav > ul > li:last-of-type > a');
+                console.log("page"  + i)
+                i+=1
                 return scrapeCurrentPage(); // Call this function recursively
             }
             await page.close();
@@ -67,22 +70,7 @@ const ScraperObject = {
         }
 
         let data = await scrapeCurrentPage();
-
-        // let userDataBase = [User]
-        //
-        // for (let i = 0; i < data.length; i++){
-        //     let curArticle = data[i]['articleTitle'];
-        //     let curArticleURL = data[i]['link'];
-        //     for (let j=0; j<data[i]['users'].length;j++){
-        //         if (userDataBase.indexOf(data[i]['users'][j])===-1){
-        //         }
-        //     }
-        // }
-        console.log("DATA")
-        console.log(data);
-        // for (let i = 0; i < data.length; i++) {
-        //     console.log(data[0]['users'])
-        // }
+        // console.log(data);
         return data;
     }
 }
